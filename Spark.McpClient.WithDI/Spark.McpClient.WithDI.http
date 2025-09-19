@@ -1,0 +1,6 @@
+@Spark.McpClient.WithDI_HostAddress = http://localhost:5021
+
+GET {{Spark.McpClient.WithDI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
