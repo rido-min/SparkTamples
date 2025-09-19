@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@microsoft/teams.apps": "^2.0.1",
+    "@microsoft/teams.mcpclient": "^2.0.1",
+    "@microsoft/teams.openai": "^2.0.1"
+  }
+}

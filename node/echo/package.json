@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@microsoft/teams.apps": "^2.0.0"
+  }
+}
