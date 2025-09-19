@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Spark.Echo/Spark.Echo.csproj" Id="d0d6c981-3eb7-4134-b3c1-33fad3669c40" />
+  <Project Path="Spark.McpClient.MinApi/Spark.McpClient.MinApi.csproj" Id="0ac8eacc-be2c-4122-af17-f85aeb5c8270" />
+</Solution>
