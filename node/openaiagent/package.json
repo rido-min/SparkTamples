@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@microsoft/teams.apps": "^2.0.1",
+    "@openai/agents": "^0.1.3"
+  }
+}
