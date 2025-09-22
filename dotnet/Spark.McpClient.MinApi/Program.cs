@@ -1,5 +1,6 @@
 using Microsoft.Teams.AI.Models.OpenAI;
 using Microsoft.Teams.AI.Prompts;
+using Microsoft.Teams.Api.Activities;
 using Microsoft.Teams.Apps;
 using Microsoft.Teams.Apps.Activities;
 using Microsoft.Teams.Plugins.AspNetCore.Extensions;
@@ -24,10 +25,9 @@ prompt.Plugin(new McpClientPlugin().UseMcpServer("https://learn.microsoft.com/ap
 App app = webApp.UseTeams();
 app.OnMessage(async context =>
 {
-    await prompt.Send(context.Activity.Text, new(), (chunk) => Task.Run(() =>
-    {
-        context.Stream.Emit(chunk);
-    }), context.CancellationToken);
+    await context.Send(new TypingActivity());
+    var result = await prompt.Send(context.Activity.Text);
+    await context.Send(result.Content);
 });
 webApp.Run();
 

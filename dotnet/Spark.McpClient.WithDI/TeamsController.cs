@@ -7,16 +7,15 @@ using Microsoft.Teams.Apps.Annotations;
 namespace Spark.McpClient.WithDI;
 
 [TeamsController]
-public class ActivitiesControllerr(Func<OpenAIChatPrompt> _promptFactory)
+public class TeamsController(Func<OpenAIChatPrompt> _promptFactory)
 {
     [Message]
     public async Task OnMessage(IContext<MessageActivity> context)
     {
+        await context.Send(new TypingActivity());
         var prompt = _promptFactory();
-        await prompt.Send(context.Activity.Text, new(), (chunk) => Task.Run(() =>
-        {
-            context.Stream.Emit(chunk);
-        }), context.CancellationToken);
+        var result = await prompt.Send(context.Activity.Text);
+        await context.Send(result.Content);
     }
 }
 
