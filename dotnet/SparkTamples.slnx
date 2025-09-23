@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="NotificationServer/NotificationServer.csproj" Id="40325bc7-75b7-4a90-b28b-c8a9f1a3beb6" />
   <Project Path="Spark.Echo/Spark.Echo.csproj" Id="d0d6c981-3eb7-4134-b3c1-33fad3669c40" />
   <Project Path="Spark.McpClient.MinApi/Spark.McpClient.MinApi.csproj" Id="0ac8eacc-be2c-4122-af17-f85aeb5c8270" />
   <Project Path="Spark.McpClient.WithDI/Spark.McpClient.WithDI.csproj" />
