@@ -6,4 +6,4 @@ app.on('message', async ({ send, activity }) => {
   await send(`you said "${activity.text}"`)
 })
 
-await app.start()
+app.start().catch(console.error)

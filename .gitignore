@@ -8,3 +8,5 @@ appsettings.Development.json
 
 node_modules/
 dist/
+
+devTools/
