@@ -20,7 +20,16 @@ OpenAIChatPrompt prompt = new(
                     "You are a helpful assistant that can help answer questions using Microsoft docs.",
                     "You MUST use tool calls to do all your work.")
                  );
-prompt.Plugin(new McpClientPlugin().UseMcpServer("https://learn.microsoft.com/api/mcp"));
+
+prompt.Plugin(
+    new McpClientPlugin()
+        .UseMcpServer("https://learn.microsoft.com/api/mcp", 
+            new McpClientPluginParams() 
+            { 
+                   HeadersFactory = () => new Dictionary<string, string>() 
+                   { { "HEADER_KEY", "HEADER_VALUE" } } 
+            })
+        );
 
 App app = webApp.UseTeams();
 app.OnMessage(async context =>
