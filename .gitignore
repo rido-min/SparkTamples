@@ -4,6 +4,9 @@ obj/
 launchSettings.json
 appsettings.Development.json
 .env
+*.env
 
 node_modules/
 dist/
+
+devTools/
