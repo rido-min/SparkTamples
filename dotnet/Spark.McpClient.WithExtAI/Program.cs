@@ -40,6 +40,8 @@ teamsApp.OnMessage(async context =>
 {
     await context.Send(new TypingActivity());
     ChatResponse response = await client.GetResponseAsync([new ChatMessage(ChatRole.User, context.Activity.Text)], chatOptions);
+    var toolsUsed = response.Messages.SelectMany(m => m.Contents.OfType<FunctionCallContent>());
+    Console.WriteLine("Tools used " + toolsUsed.Count());
     await context.Send(response.Text);
     var cc = response.RawRepresentation as OpenAI.Chat.ChatCompletion;
 });
