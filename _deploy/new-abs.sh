@@ -71,3 +71,8 @@ echo "CLIENT_ID=$appId" >> "$botName.env"
 echo "CLIENT_SECRET=$clientSecret" >> "$botName.env"
 
 echo "Environment variables saved to $botName.env"
+
+tenantDomain=$(az account show --query tenantDomain -o tsv)
+resid=$(az bot show --name $botName --resource-group $resourceGroup --query id -o tsv)
+url="https://portal.azure.com/#@$tenantDomain/resource/$resid"
+echo "Bot Service created successfully. You can manage it at: $url"

@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@microsoft/teams.apps": "^2.0.1"
+    "@microsoft/teams.apps": "latest"
   }
 }
