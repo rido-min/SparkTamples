@@ -66,13 +66,13 @@ az bot msteams create \
     --name $botName \
     --resource-group $resourceGroup
 
-echo "TENANT_ID=$tenantId" > "$botName.env"
-echo "CLIENT_ID=$appId" >> "$botName.env"
-echo "CLIENT_SECRET=$clientSecret" >> "$botName.env"
+echo "export TENANT_ID=$tenantId" > "$botName.env"
+echo "export CLIENT_ID=$appId" >> "$botName.env"
+echo "export CLIENT_SECRET=$clientSecret" >> "$botName.env"
 echo " " >> "$botName.env"
-echo "Teams__TenantId=\$TENANT_ID" >> "$botName.env"
-echo "Teams__ClientId=\$CLIENT_ID" >> "$botName.env"
-echo "Teams__ClientSecret=\$CLIENT_SECRET" >> "$botName.env"
+echo "export Teams__TenantId=\$TENANT_ID" >> "$botName.env"
+echo "export Teams__ClientId=\$CLIENT_ID" >> "$botName.env"
+echo "export Teams__ClientSecret=\$CLIENT_SECRET" >> "$botName.env"
 
 echo "Environment variables saved to $botName.env"
 
