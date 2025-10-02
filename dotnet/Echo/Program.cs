@@ -11,8 +11,7 @@ var teamsApp = webApp.UseTeams();
 teamsApp.OnMessage(async context =>
 {
     var a = context.Activity;
-    await context.Send("Echo: " + context.Activity.Text);
-    await context.Send(a.AddAIGenerated());
+    await context.Send("Echo from dotnet with ❤️: " + context.Activity.Text);
 });
 
 teamsApp.OnTyping(async context =>
