@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="BF.AF/BF.AF.csproj" Id="5c8b3a87-7059-4670-9d77-d2bd92cd50d0" />
   <Project Path="BF.Echo/BF.Echo.csproj" Id="c90f90ad-ac30-4c5e-bdf0-dbe78db041d3" />
   <Project Path="BF.WithAI/BF.WithAI.csproj" Id="f4f30ca1-368b-4096-801f-2009719dba13" />
   <Project Path="NotificationServer/NotificationServer.csproj" Id="40325bc7-75b7-4a90-b28b-c8a9f1a3beb6" />
