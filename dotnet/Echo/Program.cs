@@ -1,11 +1,10 @@
 using Microsoft.Teams.Plugins.AspNetCore.Extensions;
 using Microsoft.Teams.Apps.Activities;
-
+using Microsoft.Teams.Api.Activities;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddTeams();
 var webApp = builder.Build();
-
 var teamsApp = webApp.UseTeams();
 
 teamsApp.OnMessage(async context =>
