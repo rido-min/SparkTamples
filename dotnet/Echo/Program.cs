@@ -1,4 +1,4 @@
-using Microsoft.Teams.Plugins.AspNetCore.Extensions;
+using Microsoft.Teams.Apps;
 using Microsoft.Teams.Apps.Activities;
 
 

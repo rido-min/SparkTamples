@@ -1,16 +1,12 @@
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
+using Microsoft.Bot.Core.Compat.Adapter;
 using Microsoft.Bot.Schema;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
-
-builder.Services.AddSingleton<IBotFrameworkHttpAdapter>(provider => 
-    new CloudAdapter(
-        provider.GetRequiredService<BotFrameworkAuthentication>(),
-        provider.GetRequiredService<ILogger<CloudAdapter>>()));
+builder.AddCompatAdapter();
 builder.Services.AddTransient<IBot, EchoBot>();
 
 var app = builder.Build();
