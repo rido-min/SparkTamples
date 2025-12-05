@@ -14,10 +14,4 @@ teamsApp.OnMessage(async context =>
     await context.Send("Echo from dotnet with ❤️: " + context.Activity.Text);
 });
 
-teamsApp.OnTyping(async context =>
-{
-    var a = context.Activity;
-    await context.Send("I see you're typing...");
-});
-
 webApp.Run("http://localhost:3978");
