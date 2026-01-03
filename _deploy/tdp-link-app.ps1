@@ -113,9 +113,9 @@ function Reset-AppCredentials {
         
         # Create the output object with Teams environment variable format
         $output = @{
-            "Teams__ClientId" = $AppId
-            "Teams__TenantId" = $TenantId
-            "Teams__ClientSecret" = $credentialInfo.password
+            "CLIENT_ID" = $AppId
+            "TENANT_ID" = $TenantId
+            "CLIENT_SECRET" = $credentialInfo.password
         }
         
         Write-Host "✓ Credentials reset successfully!" -ForegroundColor Green
@@ -183,9 +183,9 @@ try {
     "launchBrowser": false,
     "environmentVariables": {
       "ASPNETCORE_ENVIRONMENT": "Development",
-      "Teams__ClientId": "$($credentials."Teams__ClientId")",
-      "Teams__TenantId": "$($credentials."Teams__TenantId")",
-      "Teams__ClientSecret": "$($credentials."Teams__ClientSecret")"
+      "CLIENT_ID": "$($credentials."CLIENT_ID")",
+      "TENANT_ID": "$($credentials."TENANT_ID")",
+      "CLIENT_SECRET": "$($credentials."CLIENT_SECRET")"
     },
     "applicationUrl": "http://localhost:3978"
   }
@@ -196,9 +196,9 @@ try {
     
     Write-Host ""
     Write-Host "=== Credentials Reset Complete ===" -ForegroundColor Green
-    Write-Host "Teams__ClientId: $($credentials."Teams__ClientId")" -ForegroundColor Gray
-    Write-Host "Teams__TenantId: $($credentials."Teams__TenantId")" -ForegroundColor Gray
-    Write-Host "Teams__ClientSecret: $($credentials."Teams__ClientSecret".Substring(0, 8))..." -ForegroundColor Gray
+    Write-Host "CLIENT_ID: $($credentials."CLIENT_ID")" -ForegroundColor Gray
+    Write-Host "TENANT_ID: $($credentials."TENANT_ID")" -ForegroundColor Gray
+    Write-Host "CLIENT_SECRET: $($credentials."CLIENT_SECRET".Substring(0, 8))..." -ForegroundColor Gray
     Write-Host ""
     Write-Host "✓ Credentials saved to: $outputFile" -ForegroundColor Green
     
@@ -213,9 +213,9 @@ catch {
     # Still display the credentials if file save failed
     Write-Host ""
     Write-Host "Credentials (file save failed):" -ForegroundColor Yellow
-    Write-Host "Teams__ClientId: $($credentials."Teams__ClientId")"
-    Write-Host "Teams__TenantId: $($credentials."Teams__TenantId")"
-    Write-Host "Teams__ClientSecret: $($credentials."Teams__ClientSecret")"
+    Write-Host "CLIENT_ID: $($credentials."CLIENT_ID")"
+    Write-Host "TENANT_ID: $($credentials."TENANT_ID")"
+    Write-Host "CLIENT_SECRET: $($credentials."CLIENT_SECRET")"
 }
 
 Write-Host ""

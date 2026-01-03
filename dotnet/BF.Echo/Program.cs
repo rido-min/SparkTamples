@@ -15,8 +15,8 @@ builder.Services.AddTransient<IBot, EchoBot>();
 
 var app = builder.Build();
 
-app.MapPost("/api/messages", async (IBotFrameworkHttpAdapter adapter, IBot bot, HttpRequest request, HttpResponse response) => 
-    await adapter.ProcessAsync(request, response, bot));
+app.MapPost("/api/messages", (IBotFrameworkHttpAdapter adapter, IBot bot, HttpRequest request, HttpResponse response) 
+    => adapter.ProcessAsync(request, response, bot));
 
 app.Run();
 
@@ -24,7 +24,11 @@ class EchoBot: ActivityHandler
 {
     protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
     {
+        var t = new Activity("typing");
+        var rest = await turnContext.SendActivityAsync(t);
+
         var replyText = $"Echo: {turnContext.Activity.Text}";
-        await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
+        var res = await turnContext.SendActivityAsync(MessageFactory.Text(replyText, replyText), cancellationToken);
+        Console.WriteLine(res);
     }
 }
