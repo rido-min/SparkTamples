@@ -1,0 +1,12 @@
+{
+  "name": "reactions",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start-ts": "tsx --env-file-if-exists .env src/app.ts",
+    "start": "node --env-file .env --watch src/index.js"
+  },
+  "dependencies": {
+    "@microsoft/teams.apps": "^2.0.6-preview.7"
+  }
+}
