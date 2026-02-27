@@ -16,6 +16,7 @@ app.message('unreact', async ({ api, activity }) => {
 app.message('react', async ({ api, send, activity }) => {
 
     const reaction = activity.text.split(' ')[1]
+
     await api.reactions.add(
         activity.conversation.id,
         activity.id,
@@ -33,8 +34,7 @@ app.message('react', async ({ api, send, activity }) => {
                         value: `unreact ${reaction} ${activity.id}`
                     }
                 ]
-            })
-        )
+            }))
 })
 
 app.on('message', async ({ api, send, activity }) => {
@@ -43,11 +43,11 @@ app.on('message', async ({ api, send, activity }) => {
     await api.reactions.add(
         activity.conversation.id,
         activity.id,
-        'launch'
+        'heart'
     )
 
     await send('Type react followed by a reaction name to add a reaction, or unreact followed by a reaction name and message id to remove a reaction. ' +
-        'For example: react yes-tone3 or unreact launch ' + activity.id)
+        'For example: react yes-tone3 or unreact heart ' + activity.id)
 })
 
 app.start()
