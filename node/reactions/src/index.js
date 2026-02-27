@@ -22,17 +22,19 @@ app.message('react', async ({ api, send, activity }) => {
         reaction
     )
 
-    await send(new MessageActivity('I added a reaction to this message!')
-        .withSuggestedActions({
-            to: [activity.from.id],
-            actions: [
-                {
-                    type: 'imBack',
-                    title: `unreact ${reaction} ${activity.id}`,
-                    value: `unreact ${reaction} ${activity.id}`
-                }
-            ]
-        }))
+    await send(
+        new MessageActivity('I added a reaction to your message!')
+            .withSuggestedActions({
+                to: [activity.from.id],
+                actions: [
+                    {
+                        type: 'imBack',
+                        title: `unreact ${reaction} ${activity.id}`,
+                        value: `unreact ${reaction} ${activity.id}`
+                    }
+                ]
+            })
+        )
 })
 
 app.on('message', async ({ api, send, activity }) => {
