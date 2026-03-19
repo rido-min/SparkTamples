@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-BFCompatDemo-5e9519b1-cadd-4148-8088-d7dcd6d8d062</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Teams.Bot.Compat" Version="0.0.1-alpha-0082" />
+  </ItemGroup>
+
+</Project>
