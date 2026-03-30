@@ -41,6 +41,8 @@ class AzureOpenAIAgentBot : ActivityHandler
 
     protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
     {
+        
+
         var reply = await agent!.RunAsync(turnContext.Activity.Text, cancellationToken: cancellationToken);
         await turnContext.SendActivityAsync(MessageFactory.Text(reply.Text), cancellationToken);
     }
