@@ -97,7 +97,7 @@ namespace BFSSO.Dialogs
                         var card = new ThumbnailCard(images: new List<CardImage> { cardImage });
                         var reply = MessageFactory.Attachment(card.ToAttachment());
 
-                        await stepContext.Context.SendActivityAsync(MessageFactory.Text("Sorry! User doesn't have a profile picture to display."), cancellationToken);
+                        await stepContext.Context.SendActivityAsync(reply, cancellationToken);
                     }
                     else
                     {
