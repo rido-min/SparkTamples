@@ -2,10 +2,12 @@
   <Folder Name="/Solution Items/">
     <File Path="nuget.config" />
   </Folder>
+  <Project Path="AdvancedHosting/AdvancedHosting.csproj" Id="8fd5f775-75df-4d16-b8a1-981546063a40" />
   <Project Path="BF.AF/BF.AF.csproj" Id="5c8b3a87-7059-4670-9d77-d2bd92cd50d0" />
   <Project Path="BF.Echo/BF.Echo.csproj" Id="c90f90ad-ac30-4c5e-bdf0-dbe78db041d3" />
   <Project Path="BF.WithAI/BF.WithAI.csproj" Id="f4f30ca1-368b-4096-801f-2009719dba13" />
   <Project Path="BFCompatDemo/BFCompatDemo.csproj" Id="0669d387-a637-44bd-9bfc-cff10b2f7bc1" />
+  <Project Path="BFSSO/BFSSO.csproj" Id="3eb0cd3f-3817-44ab-a322-07ed603fe80f" />
   <Project Path="CardsDemo/CardsDemo.csproj" Id="5a4302dd-184d-41e0-85f7-4406cbbd3d34" />
   <Project Path="CoreBot/CoreBot.csproj" />
   <Project Path="Echo/Echo.csproj" />
