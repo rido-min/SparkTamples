@@ -5,47 +5,62 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using BFSSO.Dialogs;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace BFSSO.Bots
 {
-    // This bot is derived (view DialogBot<T>) from the TeamsActivityHandler class currently included as part of this sample.
-    public class TeamsBot : DialogBot<MainDialog>
+    /// <summary>
+    /// This bot is derived from the TeamsActivityHandler class and handles Teams-specific activities.
+    /// </summary>
+    /// <typeparam name="T">The type of the dialog.</typeparam>
+    public class TeamsBot<T> : DialogBot<T> where T : Dialog
     {
-        // Constructor to initialize the bot with necessary dependencies
-        public TeamsBot(ConversationState conversationState, UserState userState, MainDialog dialog, ILogger<DialogBot<MainDialog>> logger, IConfiguration configuration)
-            : base(conversationState, userState, dialog, logger, configuration["ConnectionName"])
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TeamsBot{T}"/> class.
+        /// </summary>
+        /// <param name="conversationState">The conversation state.</param>
+        /// <param name="userState">The user state.</param>
+        /// <param name="dialog">The dialog.</param>
+        /// <param name="logger">The logger.</param>
+        public TeamsBot(ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger)
+            : base(conversationState, userState, dialog, logger)
         {
-            // Check if the ConnectionName exists in the configuration
-            if (string.IsNullOrEmpty(configuration["ConnectionName"]))
+        }
+
+        /// <summary>
+        /// Handles the event when members are added to the conversation.
+        /// </summary>
+        /// <param name="membersAdded">The list of members added.</param>
+        /// <param name="turnContext">The turn context.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        {
+            foreach (var member in membersAdded)
             {
-                logger.LogError("ConnectionName is missing from configuration.");
+                if (member.Id != turnContext.Activity.Recipient.Id)
+                {
+                    await turnContext.SendActivityAsync(MessageFactory.Text("Welcome to AuthenticationBot. Type anything to get logged in. Type 'logout' to sign-out."), cancellationToken);
+                }
             }
         }
 
         /// <summary>
-        /// Override this in a derived class to provide logic for when members, except the bot, join the conversation, such as your bot's welcome logic.
+        /// Handles the Teams sign-in verification state.
         /// </summary>
-        /// <param name="membersAdded">A list of all the members added to the conversation, as described by the conversation update activity.</param>
-        /// <param name="turnContext">A strongly-typed context object for this turn.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="turnContext">The turn context.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
-        protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        protected override async Task OnTeamsSigninVerifyStateAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
         {
-            // Iterate over all members added to the conversation.
-            foreach (var member in membersAdded)
-            {
-                // Ensure that the bot doesn't greet itself
-                if (member.Id != turnContext.Activity.Recipient.Id)
-                {
-                    // Send a welcome message to new members.
-                    await turnContext.SendActivityAsync(MessageFactory.Text("Welcome to Universal Adaptive Cards. Type 'login' to sign in using Universal SSO."), cancellationToken);
-                }
-            }
+            _logger.LogInformation("Running dialog with sign-in/verify state from an Invoke Activity.");
+
+            // The OAuth Prompt needs to see the Invoke Activity in order to complete the login process.
+            // Run the Dialog with the new Invoke Activity.
+            await _dialog.RunAsync(turnContext, _conversationState.CreateProperty<DialogState>(nameof(DialogState)), cancellationToken);
         }
     }
 }

@@ -4,18 +4,22 @@
 
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.Bot.Builder.Teams;
 using Microsoft.Bot.Builder.TraceExtensions;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Logging;
+using Microsoft.Graph.Models;
 
 namespace BFSSO
 {
     public class AdapterWithErrorHandler : CloudAdapter
     {
         // Constructor that initializes the bot framework authentication and logger.
-        public AdapterWithErrorHandler(BotFrameworkAuthentication auth, ILogger<IBotFrameworkHttpAdapter> logger)
+        public AdapterWithErrorHandler(BotFrameworkAuthentication auth, IStorage storage, IConfiguration configuration, ILogger<IBotFrameworkHttpAdapter> logger)
             : base(auth, logger)
         {
+
+            base.Use(new TeamsSSOTokenExchangeMiddleware(storage, configuration["ConnectionName"]));
             // Define the error handling behavior during the bot's turn.
             OnTurnError = async (turnContext, exception) =>
             {

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Graph;
+using Microsoft.Graph;  
 using Microsoft.Graph.Models;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Graph.Me.SendMail;
@@ -18,11 +18,11 @@ namespace BFSSO.Helper
 {
     // This class is a wrapper for the Microsoft Graph API
     // See: https://developer.microsoft.com/en-us/graph
-    public class GraphServiceClientHelper
+    public class SimpleGraphClient
     {
         private readonly string _token;
 
-        public GraphServiceClientHelper(string token)
+        public SimpleGraphClient(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
             {

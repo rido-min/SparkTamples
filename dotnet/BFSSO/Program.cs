@@ -24,7 +24,6 @@ app.Run();
 
 void ConfigureServices(IServiceCollection services)
 {
-    services.AddAuthorization();
     // Add HTTP client and JSON configuration.
 //    services.AddHttpClient().AddControllers().AddNewtonsoftJson();
 
@@ -35,15 +34,15 @@ void ConfigureServices(IServiceCollection services)
     services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
 
     // Register state management services. Consider using Scoped for better isolation.
-    services.AddScoped<IStorage, MemoryStorage>(); // Consider replacing MemoryStorage with persistent storage for production.
-    services.AddScoped<UserState>();
-    services.AddScoped<ConversationState>();
+    services.AddSingleton<IStorage, MemoryStorage>(); // Consider replacing MemoryStorage with persistent storage for production.
+    services.AddSingleton<UserState>();
+    services.AddSingleton<ConversationState>();
 
     // Register the dialog to be used by the bot.
     services.AddSingleton<MainDialog>();
 
     // Register the bot as a transient service.
-    services.AddTransient<IBot, TeamsBot>();
+    services.AddTransient<IBot, TeamsBot<MainDialog>>();
 }
 
 
