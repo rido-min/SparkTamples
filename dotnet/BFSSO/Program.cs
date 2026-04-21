@@ -8,9 +8,10 @@ using BFSSO.Dialogs;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
+using Microsoft.Teams.Bot.Compat;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.AddCompatAdapter();
 // Add necessary services to the container.
 ConfigureServices(builder.Services);
 
@@ -31,7 +32,7 @@ void ConfigureServices(IServiceCollection services)
     services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
     // Register Bot Framework Authentication.
-    services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
+    //services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
 
     // Register state management services. Consider using Scoped for better isolation.
     services.AddSingleton<IStorage, MemoryStorage>(); // Consider replacing MemoryStorage with persistent storage for production.

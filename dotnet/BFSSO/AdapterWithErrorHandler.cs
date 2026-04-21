@@ -9,14 +9,16 @@ using Microsoft.Bot.Builder.TraceExtensions;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph.Models;
+using Microsoft.Teams.Bot.Apps;
+using Microsoft.Teams.Bot.Compat;
 
 namespace BFSSO
 {
-    public class AdapterWithErrorHandler : CloudAdapter
+    public class AdapterWithErrorHandler : CompatAdapter
     {
         // Constructor that initializes the bot framework authentication and logger.
-        public AdapterWithErrorHandler(BotFrameworkAuthentication auth, IStorage storage, IConfiguration configuration, ILogger<IBotFrameworkHttpAdapter> logger)
-            : base(auth, logger)
+        public AdapterWithErrorHandler(TeamsBotApplication botApp, IHttpContextAccessor httpCtxAccessor, IStorage storage, IConfiguration configuration, ILogger<IBotFrameworkHttpAdapter> logger)
+            : base(botApp, httpCtxAccessor)
         {
 
             base.Use(new TeamsSSOTokenExchangeMiddleware(storage, configuration["ConnectionName"]));

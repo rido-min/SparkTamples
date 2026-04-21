@@ -182,7 +182,7 @@ namespace BFSSO.Dialogs
             var result = (bool)stepContext.Result;
             if (result)
             {
-                return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), cancellationToken: cancellationToken);
+                return await stepContext.BeginDialogAsync("graphOAuthPrompt", cancellationToken: cancellationToken);
             }
 
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
