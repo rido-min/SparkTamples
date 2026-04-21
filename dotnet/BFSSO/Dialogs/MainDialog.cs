@@ -2,17 +2,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using BFSSO.Helper;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Bot.Schema;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace BFSSO.Dialogs
 {
@@ -34,12 +26,23 @@ namespace BFSSO.Dialogs
             _logger = logger;
 
             AddDialog(new OAuthPrompt(
-                nameof(OAuthPrompt),
+                "graphOAuthPrompt",
                 new OAuthPromptSettings
                 {
-                    ConnectionName = ConnectionName,
+                    ConnectionName = configuration["ConnectionName"],
                     Text = "Please Sign In",
-                    Title = "Sign In",
+                    Title = "Sign In in" + configuration["ConnectionName"],
+                    Timeout = 300000, // User has 5 minutes to login (1000 * 60 * 5)
+                    EndOnInvalidMessage = true
+                }));
+
+            AddDialog(new OAuthPrompt(
+                "ghOAuthPrompt",
+                new OAuthPromptSettings
+                {
+                    ConnectionName = "gh",
+                    Text = "Please Sign In",
+                    Title = "Sign In GH",
                     Timeout = 300000, // User has 5 minutes to login (1000 * 60 * 5)
                     EndOnInvalidMessage = true
                 }));
@@ -48,10 +51,13 @@ namespace BFSSO.Dialogs
 
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[]
             {
-                    PromptStepAsync,
-                    LoginStepAsync,
+                    PromptGraphStepAsync,
+                    HandleGraphTokenAsync,
+                    PromptForGHTokenAsync,
+                    HandleGHTokenAsync,
+                    FinalStep,
                     DisplayTokenPhase1Async,
-                    DisplayTokenPhase2Async,
+                    DisplayTokenPhase2Async
             }));
 
             // The initial child Dialog to run.
@@ -64,10 +70,36 @@ namespace BFSSO.Dialogs
         /// <param name="stepContext">The waterfall step context.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task<DialogTurnResult> PromptStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> PromptGraphStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             _logger.LogInformation("PromptStepAsync() called.");
-            return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), null, cancellationToken);
+            return await stepContext.BeginDialogAsync("graphOAuthPrompt", null, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> HandleGraphTokenAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var tokenResponse = (TokenResponse)stepContext.Result;
+            if (tokenResponse != null)
+            {
+                // Store the Graph token for later use
+                stepContext.Values["ssoToken"] = tokenResponse.Token;
+            }
+            return await stepContext.NextAsync(null, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> PromptForGHTokenAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            return await stepContext.BeginDialogAsync("ghOAuthPrompt", null, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> HandleGHTokenAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var tokenResponse = (TokenResponse)stepContext.Result;
+            if (tokenResponse != null)
+            {
+                stepContext.Values["ghToken"] = tokenResponse.Token;
+            }
+            return await stepContext.NextAsync(null, cancellationToken);
         }
 
         /// <summary>
@@ -76,38 +108,50 @@ namespace BFSSO.Dialogs
         /// <param name="stepContext">The waterfall step context.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task<DialogTurnResult> LoginStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> FinalStep(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            var tokenResponse = (TokenResponse)stepContext.Result;
-            if (tokenResponse?.Token != null)
+            var oauthValues = stepContext.Values;
+            if (oauthValues != null)
             {
                 try
                 {
-                    var client = new SimpleGraphClient(tokenResponse.Token);
-                    var me = await client.GetMeAsync();
-                    var title = !string.IsNullOrEmpty(me.JobTitle) ? me.JobTitle : "Unknown";
 
-                    await stepContext.Context.SendActivityAsync($"You're logged in as {me.DisplayName} ({me.UserPrincipalName}); your job title is: {title}");
-
-                    var photo = await client.GetPhotoAsync();
-
-                    if (!string.IsNullOrEmpty(photo))
+                    if (oauthValues.ContainsKey("ssoToken"))
                     {
-                        var cardImage = new CardImage(photo);
-                        var card = new ThumbnailCard(images: new List<CardImage> { cardImage });
-                        var reply = MessageFactory.Attachment(card.ToAttachment());
+                        var client = new SimpleGraphClient(oauthValues["ssoToken"].ToString()!);
+                        var me = await client.GetMeAsync();
+                        var title = !string.IsNullOrEmpty(me.JobTitle) ? me.JobTitle : "Unknown";
 
-                        await stepContext.Context.SendActivityAsync(reply, cancellationToken);
+                        await stepContext.Context.SendActivityAsync($"You're logged in as {me.DisplayName} ({me.UserPrincipalName}); your job title is: {title}");
+
+                        //var photo = await client.GetPhotoAsync();
+
+                        //if (!string.IsNullOrEmpty(photo))
+                        //{
+                        //    var cardImage = new CardImage(photo);
+                        //    var card = new ThumbnailCard(images: new List<CardImage> { cardImage });
+                        //    var reply = MessageFactory.Attachment(card.ToAttachment());
+
+                        //    await stepContext.Context.SendActivityAsync(reply, cancellationToken);
+                        //}
+                        //else
+                        //{
+                        //    await stepContext.Context.SendActivityAsync(MessageFactory.Text("Sorry! User doesn't have a profile picture to display."), cancellationToken);
+                        //}
                     }
-                    else
+
+                    if (oauthValues.ContainsKey("ghToken"))
                     {
-                        await stepContext.Context.SendActivityAsync(MessageFactory.Text("Sorry! User doesn't have a profile picture to display."), cancellationToken);
+                        var githubClient = new GitHubSimpleClient(oauthValues["ghToken"].ToString()!);
+                        var user = await githubClient.GetUserInfoAsync();
+                        await stepContext.Context.SendActivityAsync($"You're logged in GH as {user})", cancellationToken: cancellationToken);
                     }
 
                     return await stepContext.PromptAsync(
                         nameof(ConfirmPrompt),
                         new PromptOptions { Prompt = MessageFactory.Text("Would you like to view your token?") },
                         cancellationToken);
+
                 }
                 catch (Exception ex)
                 {
@@ -154,13 +198,30 @@ namespace BFSSO.Dialogs
         {
             _logger.LogInformation("DisplayTokenPhase2Async() method called.");
 
-            var tokenResponse = (TokenResponse)stepContext.Result;
-            if (tokenResponse != null)
+            //var tokenResponse = (TokenResponse)stepContext.Result;
+            //if (tokenResponse != null)
+            //{
+            //    await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Here is your token: {tokenResponse.Token}"), cancellationToken);
+            //}
+
+            var oauthValues = stepContext.Values;
+            if (oauthValues.ContainsKey("ghToken"))
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Here is your token: {tokenResponse.Token}"), cancellationToken);
+                var githubClient = new GitHubSimpleClient(oauthValues["ghToken"].ToString()!);
+                var user = await githubClient.GetUserInfoAsync();
+                await stepContext.Context.SendActivityAsync($"You're logged in GH as {user})", cancellationToken: cancellationToken);
             }
 
-            return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
+            if (oauthValues.ContainsKey("ssoToken"))
+            {
+                var client = new SimpleGraphClient(oauthValues["ssoToken"].ToString()!);
+                var me = await client.GetMeAsync();
+                var title = !string.IsNullOrEmpty(me.JobTitle) ? me.JobTitle : "Unknown";
+
+                await stepContext.Context.SendActivityAsync($"You're logged in Entra as {me.DisplayName} ({me.UserPrincipalName}); your job title is: {title}");
+            }
+
+                return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
     }
 }

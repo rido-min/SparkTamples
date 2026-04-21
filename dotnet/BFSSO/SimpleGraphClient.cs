@@ -9,12 +9,12 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Graph;  
+using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Graph.Me.SendMail;
 
-namespace BFSSO.Helper
+namespace BFSSO
 {
     // This class is a wrapper for the Microsoft Graph API
     // See: https://developer.microsoft.com/en-us/graph

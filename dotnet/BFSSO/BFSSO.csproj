@@ -12,5 +12,9 @@
 		<PackageReference Include="Microsoft.Bot.Builder.Dialogs" Version="4.22.3" />
 		<PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.22.3" />
 		<PackageReference Include="Microsoft.Identity.Client" Version="4.83.3" />
+		<PackageReference Include="Octokit" Version="14.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Helper\" />
 	</ItemGroup>
 </Project>
