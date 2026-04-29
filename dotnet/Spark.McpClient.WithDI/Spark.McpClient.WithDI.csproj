@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Teams.Plugins.External.McpClient" Version="2.0.0-preview.14" />
+    <PackageReference Include="Microsoft.Teams.Plugins.External.McpClient" Version="2.0.6-preview-0026" />
   </ItemGroup>
 
 </Project>
