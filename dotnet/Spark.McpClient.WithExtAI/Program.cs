@@ -1,19 +1,20 @@
 using Microsoft.Extensions.AI;
-using Microsoft.Teams.Api.Activities;
-using Microsoft.Teams.Apps.Activities;
-using Microsoft.Teams.Plugins.AspNetCore.Extensions;
+using Microsoft.Teams.Apps;
+using Microsoft.Teams.Apps.Handlers;
+using Microsoft.Teams.Apps.Schema;
 using ModelContextProtocol.Client;
 using OpenAI;
 using ChatMessage = Microsoft.Extensions.AI.ChatMessage;
 
 IChatClient client =
-    new ChatClientBuilder(new OpenAIClient(Environment.GetEnvironmentVariable("OPENAI_API_KEY")!).GetChatClient("gpt-4o").AsIChatClient())
-    .UseFunctionInvocation()
-    .UseLogging(LoggerFactory.Create(b => b.AddConsole().SetMinimumLevel(LogLevel.Information)))
-    .Build();
+    new ChatClientBuilder(
+        new OpenAIClient(Environment.GetEnvironmentVariable("OPENAI_API_KEY")!).GetChatClient("gpt-4o").AsIChatClient())
+            .UseFunctionInvocation()
+            .UseLogging(LoggerFactory.Create(b => b.AddConsole().SetMinimumLevel(LogLevel.Information)))
+            .Build();
 
-var mcpClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new () { 
+var mcpClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new () { 
         Endpoint = new Uri("https://learn.microsoft.com/api/mcp"), 
         TransportMode = HttpTransportMode.AutoDetect, 
         Name = "msdocs" }));
@@ -28,21 +29,25 @@ var chatOptions = new ChatOptions
     Tools = [.. tools]
 };
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 builder.AddTeams();
 var webApp = builder.Build();
 
 var teamsApp = webApp.UseTeams();
 
-teamsApp.OnMessage(async context =>
+teamsApp.OnMessage(async (context, ct) =>
 {
-    await context.Send(new TypingActivity());
+    await context.Typing(string.Empty, ct);
     ChatResponse response = await client.GetResponseAsync([new ChatMessage(ChatRole.User, context.Activity.Text)], chatOptions);
     var toolsUsed = response.Messages.SelectMany(m => m.Contents.OfType<FunctionCallContent>());
     Console.WriteLine("Tools used " + toolsUsed.Count());
-    await context.Send(response.Text);
+
+    var responseMsg = TeamsActivity.CreateBuilder()
+        .WithText($"{response.Text}", TextFormats.Markdown)
+        .AddMention(context.Activity?.From!)
+        .Build();
+
+    await context.Send(responseMsg, ct);
     var cc = response.RawRepresentation as OpenAI.Chat.ChatCompletion;
 });
 
