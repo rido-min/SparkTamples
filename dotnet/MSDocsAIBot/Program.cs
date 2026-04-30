@@ -4,6 +4,7 @@ using Microsoft.Teams.Apps.Handlers;
 using Microsoft.Teams.Apps.Schema;
 using ModelContextProtocol.Client;
 using OpenAI;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using OpenTelemetry;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
@@ -11,18 +12,19 @@ using ChatMessage = Microsoft.Extensions.AI.ChatMessage;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.Services.AddOpenTelemetry()
+    .UseAzureMonitor()
     .WithTracing(t => t
         .AddSource("Experimental.Microsoft.Extensions.AI")
         .AddSource("ModelContextProtocol")
         .AddSource("OpenAI.*")
-        .AddHttpClientInstrumentation()
         .AddConsoleExporter())
     .WithMetrics(m => m
         .AddMeter("Experimental.Microsoft.Extensions.AI")
         .AddMeter("ModelContextProtocol")
         .AddMeter("OpenAI.*")
-        .AddHttpClientInstrumentation()
         .AddConsoleExporter());
 
 IChatClient client =
@@ -54,6 +56,7 @@ var chatOptions = new ChatOptions
 builder.AddTeams();
 var webApp = builder.Build();
 
+webApp.MapDefaultEndpoints();
 var teamsApp = webApp.UseTeams();
 
 teamsApp.OnMessage(async (context, ct) =>

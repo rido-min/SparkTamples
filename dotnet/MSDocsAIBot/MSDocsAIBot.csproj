@@ -8,14 +8,20 @@
 
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Teams.Apps" Version="2.1.0-beta-0002-gcde43e9267" />
 		<PackageReference Include="Microsoft.Extensions.AI" Version="10.5.0" />
 		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.5.0" />
+		<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.4.0" />
 		<PackageReference Include="ModelContextProtocol" Version="1.2.0" />
-		<PackageReference Include="Microsoft.Teams.Apps" Version="2.1.0-beta-0002-gcde43e9267" />
 		<PackageReference Include="OpenTelemetry.Api" Version="1.15.3" />
 		<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.3" />
 		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <ProjectReference Include="..\MSDocsAIBot.ServiceDefaults\MSDocsAIBot.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 </Project>
