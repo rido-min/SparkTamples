@@ -8,7 +8,10 @@ using Azure.Monitor.OpenTelemetry.AspNetCore;
 using OpenTelemetry;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
+using System.Collections.Concurrent;
 using ChatMessage = Microsoft.Extensions.AI.ChatMessage;
+
+var chatHistories = new ConcurrentDictionary<string, List<ChatMessage>>();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +32,7 @@ builder.Services.AddOpenTelemetry()
 
 IChatClient client =
     new ChatClientBuilder(
-        new OpenAIClient(Environment.GetEnvironmentVariable("OPENAI_API_KEY")!).GetChatClient("gpt-4o").AsIChatClient())
+        new OpenAIClient(Environment.GetEnvironmentVariable("OPENAI_API_KEY")!).GetChatClient("gpt-5.1").AsIChatClient())
             .UseFunctionInvocation()
             .UseOpenTelemetry(sourceName: "Experimental.Microsoft.Extensions.AI")
             //.UseLogging(LoggerFactory.Create(b => b.AddConsole().SetMinimumLevel(LogLevel.Information)))
@@ -61,8 +64,33 @@ var teamsApp = webApp.UseTeams();
 
 teamsApp.OnMessage(async (context, ct) =>
 {
+    ArgumentNullException.ThrowIfNull(context.Activity);
+    ArgumentNullException.ThrowIfNull(context.Activity.Conversation);
+    ArgumentNullException.ThrowIfNull(context.Activity.Conversation.Id);
+
     await context.Typing(string.Empty, ct);
-    ChatResponse response = await client.GetResponseAsync([new ChatMessage(ChatRole.User, context.Activity.Text)], chatOptions);
+
+    var conversationId = context.Activity.Conversation.Id;
+    var history = chatHistories.GetOrAdd(conversationId, _ => []);
+
+    lock (history)
+    {
+        history.Add(new ChatMessage(ChatRole.User, context.Activity.Text));
+    }
+
+    List<ChatMessage> snapshot;
+    lock (history)
+    {
+        snapshot = [.. history];
+    }
+
+    ChatResponse response = await client.GetResponseAsync(snapshot, chatOptions);
+
+    lock (history)
+    {
+        history.AddRange(response.Messages);
+    }
+
     var toolsUsed = response.Messages.SelectMany(m => m.Contents.OfType<FunctionCallContent>());
     Console.WriteLine("Tools used " + toolsUsed.Count());
 
@@ -72,7 +100,6 @@ teamsApp.OnMessage(async (context, ct) =>
         .Build();
 
     await context.Send(responseMsg, ct);
-    var cc = response.RawRepresentation as OpenAI.Chat.ChatCompletion;
 });
 
 webApp.Run();
