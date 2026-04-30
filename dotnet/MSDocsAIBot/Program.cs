@@ -30,14 +30,16 @@ IChatClient client =
         new OpenAIClient(Environment.GetEnvironmentVariable("OPENAI_API_KEY")!).GetChatClient("gpt-4o").AsIChatClient())
             .UseFunctionInvocation()
             .UseOpenTelemetry(sourceName: "Experimental.Microsoft.Extensions.AI")
-            .UseLogging(LoggerFactory.Create(b => b.AddConsole().SetMinimumLevel(LogLevel.Information)))
+            //.UseLogging(LoggerFactory.Create(b => b.AddConsole().SetMinimumLevel(LogLevel.Information)))
             .Build();
 
 var mcpClient = await McpClient.CreateAsync(
-    new HttpClientTransport(new () {
+    new HttpClientTransport(new()
+    {
         Endpoint = new Uri("https://learn.microsoft.com/api/mcp"),
         TransportMode = HttpTransportMode.AutoDetect,
-        Name = "msdocs" }));
+        Name = "msdocs"
+    }));
 
 var tools = await mcpClient.ListToolsAsync();
 Console.WriteLine("Tools Found: " + string.Join(", ", tools.Select(t => t.Name)));

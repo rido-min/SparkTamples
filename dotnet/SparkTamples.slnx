@@ -11,6 +11,7 @@
   <Project Path="CardsDemo/CardsDemo.csproj" Id="5a4302dd-184d-41e0-85f7-4406cbbd3d34" />
   <Project Path="CoreBot/CoreBot.csproj" />
   <Project Path="Echo/Echo.csproj" />
+  <Project Path="MSDocsAIBot/MSDocsAIBot.csproj" />
   <Project Path="NotificationServer/NotificationServer.csproj" Id="40325bc7-75b7-4a90-b28b-c8a9f1a3beb6" />
   <Project Path="Proactive/Proactive.csproj" Id="47a25b38-e894-45e8-a7df-3e6014416183" />
   <Project Path="Spark.McpClient.MinApi/Spark.McpClient.MinApi.csproj" Id="0ac8eacc-be2c-4122-af17-f85aeb5c8270" />
