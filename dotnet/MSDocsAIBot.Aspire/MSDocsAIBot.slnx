@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="../MSDocsAIBot.AppHost/MSDocsAIBot.AppHost.csproj" />
-  <Project Path="../MSDocsAIBot.ServiceDefaults/MSDocsAIBot.ServiceDefaults.csproj" />
-  <Project Path="../MSDocsAIBot/MSDocsAIBot.csproj" />
+  <Project Path="MSDocsAIBot.AppHost/MSDocsAIBot.AppHost.csproj" />
+  <Project Path="MSDocsAIBot.ServiceDefaults/MSDocsAIBot.ServiceDefaults.csproj" />
+  <Project Path="MSDocsAIBot/MSDocsAIBot.csproj" />
 </Solution>
